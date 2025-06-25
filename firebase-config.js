@@ -4,7 +4,7 @@ const firebaseConfig = {
   authDomain: "tosin-appsheet.firebaseapp.com",
   projectId: "tosin-appsheet",
   storageBucket: "tosin-appsheet.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  messagingSenderId: "380285961021",
+  appId: "1:380285961021:web:xxxxxxxxxxxxxxxx"
 };
 firebase.initializeApp(firebaseConfig);
