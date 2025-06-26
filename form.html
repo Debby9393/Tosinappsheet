@@ -1,27 +1,74 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Water System Log</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <form id="logForm">
+  <div class="form-container">
     <h2>Water System Log</h2>
-    <input type="date" name="date" required />
-    <input type="time" name="time" required />
-    <input type="text" name="shift" placeholder="Shift" required />
-    <input type="text" name="operatorA" placeholder="Operator A" required />
-    <input type="text" name="operatorB" placeholder="Operator B" required />
-    <input type="number" name="freeChlorine" placeholder="Free Chlorine" required />
-    <input type="number" name="temperature" placeholder="Temperature" required />
-    <button type="submit">Submit</button>
-    <p id="status" style="color:green;"></p>
-  </form>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-  <script src="firebase-config.js"></script>
-  <script src="form-script.js"></script>
+    <form id="logForm">
+      <input type="date" id="date" required />
+      <input type="time" id="time" required />
+      <input type="text" id="shift" placeholder="Shift" required />
+      <input type="text" id="operator" placeholder="Operator" required />
+      <input type="text" id="supervisor" placeholder="Supervisor" required />
+      <input type="number" id="chlorine" placeholder="Chlorine Level" required />
+      <input type="number" id="temperature" placeholder="Temperature" required />
+      <button type="submit">Submit</button>
+      <p id="statusMessage"></p>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDUX52RwxuvOOxW9Yb7p8B9WOhnz-OxOjo",
+      authDomain: "tosin-appsheet.firebaseapp.com",
+      projectId: "tosin-appsheet",
+      storageBucket: "tosin-appsheet.appspot.com",
+      messagingSenderId: "380285961021",
+      appId: "1:380285961021:web:c2b65cddeaf8904ac83b54",
+      measurementId: "G-91DPPCFB4C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "index.html";
+      }
+    });
+
+    const form = document.getElementById("logForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.getElementById("statusMessage");
+
+      try {
+        await addDoc(collection(db, "logs"), {
+          date: document.getElementById("date").value,
+          time: document.getElementById("time").value,
+          shift: document.getElementById("shift").value,
+          operator: document.getElementById("operator").value,
+          supervisor: document.getElementById("supervisor").value,
+          chlorine: document.getElementById("chlorine").value,
+          temperature: document.getElementById("temperature").value
+        });
+        status.textContent = "✅ Log submitted successfully!";
+        form.reset();
+      } catch (error) {
+        status.textContent = "❌ Submission failed: " + error.message;
+      }
+    });
+  </script>
 </body>
 </html>
