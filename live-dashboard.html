@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Live Water System Logs</h2>
+  <table id="logsTable">
+    <thead>
+      <tr>
+        <th>Date</th><th>Time</th><th>Shift</th><th>Operator</th>
+        <th>Supervisor</th><th>Chlorine</th><th>Temperature</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDUX52RwxuvOOxW9Yb7p8B9WOhnz-OxOjo",
+      authDomain: "tosin-appsheet.firebaseapp.com",
+      projectId: "tosin-appsheet",
+      storageBucket: "tosin-appsheet.appspot.com",
+      messagingSenderId: "380285961021",
+      appId: "1:380285961021:web:c2b65cddeaf8904ac83b54",
+      measurementId: "G-91DPPCFB4C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tbody = document.querySelector("#logsTable tbody");
+
+    const q = query(collection(db, "logs"), orderBy("date", "desc"));
+    onSnapshot(q, (snapshot) => {
+      tbody.innerHTML = "";
+      snapshot.forEach((doc) => {
+        const log = doc.data();
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${log.date}</td>
+          <td>${log.time}</td>
+          <td>${log.shift}</td>
+          <td>${log.operator}</td>
+          <td>${log.supervisor}</td>
+          <td>${log.chlorine}</td>
+          <td>${log.temperature}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    });
+  </script>
+</body>
+</html>
